@@ -54,9 +54,9 @@ export default function DashboardSidebar({
       label: "Staff List",
     },
     {
-      key: "forms-list",
+      key: "customer-list",
       icon: <FormOutlined />,
-      label: "Forms List",
+      label: "Customer List",
     },
     {
       key: "quote-update",

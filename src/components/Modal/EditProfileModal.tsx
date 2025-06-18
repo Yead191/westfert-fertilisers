@@ -38,7 +38,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
     address: initialData.address || "",
     profilePicture: null,
   });
-//   console.log(initialData);
+  //   console.log(initialData);
 
   const handleChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -59,6 +59,15 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
         profilePicture: info.file.originFileObj,
       }));
     }
+    setFormData({
+      name: initialData.name || "",
+      contactNumber: initialData.contactNumber || "",
+      squareNumber: initialData.squareNumber || "",
+      dateOfBirth: initialData.dateOfBirth || "",
+      gender: initialData.gender || "Male",
+      address: initialData.address || "",
+      profilePicture: null,
+    });
   };
 
   const uploadProps: UploadProps = {

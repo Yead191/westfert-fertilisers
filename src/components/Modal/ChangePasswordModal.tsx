@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { Modal, Input, Button } from "antd";
 import { EyeInvisibleOutlined, EyeOutlined } from "@ant-design/icons";
+import { toast } from "sonner";
 
 interface ChangePasswordModalProps {
   visible: boolean;
@@ -33,11 +34,25 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
   };
 
   const handleSave = () => {
+    // Add manual validation if needed
+    if (
+      !formData.oldPassword ||
+      !formData.newPassword ||
+      !formData.confirmPassword
+    ) {
+      toast.error("Please fill in all password fields!");
+      return;
+    }
     if (formData.newPassword !== formData.confirmPassword) {
-      alert("New password and confirm password do not match!");
+      toast.error("New password and confirm password do not match!");
       return;
     }
     onSave(formData);
+    setFormData({
+      oldPassword: "",
+      newPassword: "",
+      confirmPassword: "",
+    });
     onClose();
   };
 
@@ -60,6 +75,7 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
           <div>
             <label>Old Password</label>
             <Input.Password
+              required
               value={formData.oldPassword}
               onChange={(e) => handleChange("oldPassword", e.target.value)}
               placeholder="Old Password"
@@ -71,6 +87,7 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
           <div>
             <label>New Password</label>
             <Input.Password
+              required
               value={formData.newPassword}
               onChange={(e) => handleChange("newPassword", e.target.value)}
               placeholder="New Password"
@@ -82,6 +99,7 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
           <div>
             <label>Confirm new Password</label>
             <Input.Password
+              required
               value={formData.confirmPassword}
               onChange={(e) => handleChange("confirmPassword", e.target.value)}
               placeholder="Confirm new Password"

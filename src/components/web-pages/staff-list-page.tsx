@@ -23,6 +23,8 @@ import {
 } from "@ant-design/icons";
 import type { ColumnsType } from "antd/es/table";
 import EmployeeDetailsModal from "../Modal/EmployeeDetailsModal";
+import { toast } from "sonner";
+import CreateProfileModal from "../Modal/CreateProfileModal";
 
 const { Title } = Typography;
 
@@ -183,6 +185,8 @@ export default function StaffListPage() {
   const [selectedEmployee, setSelectedEmployee] = useState<StaffMember | null>(
     null
   );
+  const [isCreateProfileModalVisible, setIsCreateProfileModalVisible] =
+    useState(false);
 
   const columns: ColumnsType<StaffMember> = [
     {
@@ -286,6 +290,24 @@ export default function StaffListPage() {
           >
             <Button
               type="text"
+              onClick={() => {
+                // Handle status toggle logic here
+                const newStatus =
+                  record.status === "active" ? "inactive" : "active";
+                const updatedData = staffData.map((item) =>
+                  item.key === record.key
+                    ? { ...item, status: newStatus }
+                    : item
+                );
+                toast.success(
+                  `Employee ${
+                    newStatus === "active" ? "activated" : "deactivated"
+                  } successfully!`
+                );
+                // Update the state with the new data
+                // This is a placeholder; you would typically update state in a real app
+                console.log("Updated Data:", updatedData);
+              }}
               icon={
                 record.status === "active" ? (
                   <LockOutlined />
@@ -323,6 +345,28 @@ export default function StaffListPage() {
     currentPage * pageSize
   );
 
+  const handleProfileSave = (data: {
+    userName: string;
+    designationType: string;
+    email: string;
+    password: string;
+    confirmPassword: string;
+  }) => {
+    // Map the modal data to StaffMember if needed
+    const newStaffMember: StaffMember = {
+      key: Date.now().toString(),
+      id: Math.random().toString(36).substr(2, 10).toUpperCase(),
+      name: data.userName,
+      email: data.email,
+      phone: "", // You may want to collect this in the modal
+      designation: data.designationType,
+      status: "active",
+    };
+    console.log("Saved data:", newStaffMember);
+    // Handle save logic here
+    toast.success("Profile created successfully!");
+    setIsModalVisible(false);
+  };
   return (
     <div style={{ padding: "0 24px 24px" }}>
       <Card
@@ -361,6 +405,9 @@ export default function StaffListPage() {
               }}
             ></Button>
             <Button
+              onClick={() => {
+                setIsCreateProfileModalVisible(true);
+              }}
               type="primary"
               icon={<PlusOutlined />}
               style={{
@@ -419,6 +466,11 @@ export default function StaffListPage() {
           visible={isModalVisible}
           onClose={() => setIsModalVisible(false)}
           employee={selectedEmployee}
+        />
+        <CreateProfileModal
+          visible={isCreateProfileModalVisible}
+          onClose={() => setIsCreateProfileModalVisible(false)}
+          onSave={handleProfileSave}
         />
       </ConfigProvider>
     </div>
