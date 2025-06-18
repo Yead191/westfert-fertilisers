@@ -1,8 +1,6 @@
 "use client";
 
-import type React from "react";
-
-import { useState } from "react";
+import React, { useState } from "react";
 import {
   Table,
   Input,
@@ -13,8 +11,7 @@ import {
   Typography,
   Card,
   Tooltip,
-  Badge,
-  Avatar,
+  ConfigProvider,
 } from "antd";
 import {
   SearchOutlined,
@@ -23,13 +20,11 @@ import {
   EyeOutlined,
   LockOutlined,
   UnlockOutlined,
-  BellOutlined,
 } from "@ant-design/icons";
 import type { ColumnsType } from "antd/es/table";
-import Search from "antd/es/input/Search";
+import EmployeeDetailsModal from "../Modal/EmployeeDetailsModal";
 
 const { Title } = Typography;
-// const { Search } = Input;
 
 interface StaffMember {
   key: string;
@@ -41,7 +36,6 @@ interface StaffMember {
   status: "active" | "inactive";
 }
 
-// Demo staff data
 const staffData: StaffMember[] = [
   {
     key: "1",
@@ -183,6 +177,12 @@ const staffData: StaffMember[] = [
 export default function StaffListPage() {
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [searchText, setSearchText] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [selectedEmployee, setSelectedEmployee] = useState<StaffMember | null>(
+    null
+  );
 
   const columns: ColumnsType<StaffMember> = [
     {
@@ -257,11 +257,7 @@ export default function StaffListPage() {
       render: (text: string) => (
         <Tag
           color={text === "Manager" ? "orange" : "blue"}
-          style={{
-            border: "none",
-            borderRadius: "4px",
-            fontWeight: "500",
-          }}
+          style={{ border: "none", borderRadius: "4px", fontWeight: "500" }}
         >
           {text}
         </Tag>
@@ -279,6 +275,10 @@ export default function StaffListPage() {
               icon={<EyeOutlined />}
               size="small"
               style={{ color: "#666" }}
+              onClick={() => {
+                setSelectedEmployee(record);
+                setIsModalVisible(true);
+              }}
             />
           </Tooltip>
           <Tooltip
@@ -318,17 +318,16 @@ export default function StaffListPage() {
       item.designation.toLowerCase().includes(searchText.toLowerCase())
   );
 
+  const paginatedData = filteredData.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize
+  );
+
   return (
     <div style={{ padding: "0 24px 24px" }}>
-      {/* Table */}
       <Card
-        style={{
-          borderRadius: "24px",
-          boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-        }}
+        style={{ borderRadius: "24px", boxShadow: "0 2px 8px rgba(0,0,0,0.1)" }}
       >
-        {/* Controls */}
-
         <div
           style={{
             display: "flex",
@@ -346,12 +345,15 @@ export default function StaffListPage() {
               placeholder="Search here"
               allowClear
               style={{ width: 300, padding: "8px 12px" }}
-              suffix={<SearchOutlined size={24} />}
+              suffix={<SearchOutlined />}
               value={searchText}
-              onChange={(e) => setSearchText(e.target.value)}
+              onChange={(e) => {
+                setSearchText(e.target.value);
+                setCurrentPage(1); // Reset to first page on search
+              }}
             />
             <Button
-              icon={<FilterOutlined size={32} />}
+              icon={<FilterOutlined />}
               style={{
                 boxShadow: "0 2px 24px rgba(0,0,0,0.0)",
                 borderRadius: "50%",
@@ -376,11 +378,12 @@ export default function StaffListPage() {
         </div>
         <Table
           columns={columns}
-          dataSource={filteredData}
+          dataSource={paginatedData}
           pagination={{
-            current: 1,
-            pageSize: 10,
-            total: 150,
+            current: currentPage,
+            pageSize: pageSize,
+            total: filteredData.length,
+            onChange: (page) => setCurrentPage(page),
             showSizeChanger: false,
             showQuickJumper: false,
             showTotal: (total, range) =>
@@ -397,11 +400,27 @@ export default function StaffListPage() {
           }}
           scroll={{ x: 1000 }}
           size="middle"
-          style={{
-            background: "#fff",
-          }}
+          rowSelection={rowSelection}
+          style={{ background: "#fff" }}
         />
       </Card>
+
+      <ConfigProvider
+        theme={{
+          components: {
+            Modal: {
+              contentBg: "rgb(241,241,249)",
+              headerBg: "rgb(241,241,249)",
+            },
+          },
+        }}
+      >
+        <EmployeeDetailsModal
+          visible={isModalVisible}
+          onClose={() => setIsModalVisible(false)}
+          employee={selectedEmployee}
+        />
+      </ConfigProvider>
     </div>
   );
 }
