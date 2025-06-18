@@ -24,3 +24,41 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+
+.poppins {
+  font-family: "Poppins", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.ant-layout-sider-trigger {
+  background: #6dbd44 !important;
+}
+
+.ant-menu-item-selected {
+  background-color: #6dbd44 !important;
+  color: white !important;
+  border-radius: 0px 30px 30px 0px !important;
+}
+
+.ant-menu-item-selected .ant-menu-item-icon {
+  color: white !important;
+}
+
+.ant-menu-item:hover {
+  color: #6dbd44 !important;
+  border-radius: 0px 30px 30px 0px !important;
+}
+
+.ant-menu-item:hover .ant-menu-item-icon {
+  color: #6dbd44 !important;
+}
+
+/* .ant-menu-submenu-active {
+  color: #6dbd44 !important;
+} */
+.ant-menu-submenu-selected > .ant-menu-submenu-title {
+  color: #6dbd44 !important;
+}

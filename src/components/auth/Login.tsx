@@ -4,6 +4,7 @@ import React from "react";
 import { Form, Input, Button, Select, Checkbox } from "antd";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 // import { useRouter } from "next/navigation";
 const { Option } = Select;
 
@@ -12,7 +13,7 @@ const SignInForm = () => {
   const onFinish = (values: any) => {
     console.log("Received values:", values);
     toast.success("Sign In Successful!");
-    router.push("/");
+    router.push("/analytics");
   };
 
   return (
@@ -51,7 +52,7 @@ const SignInForm = () => {
           </Select>
         </Form.Item>
 
-        <label htmlFor="designationType">Designation Type</label>
+        <label htmlFor="designationType">Password</label>
 
         <Form.Item
           name="password"
@@ -76,12 +77,12 @@ const SignInForm = () => {
             <Checkbox>Remember me</Checkbox>
           </Form.Item>
 
-          <a
+          <Link
             className="login-form-forgot text-primary font-semibold"
             href="/auth/forget-password"
           >
             Forgot password
-          </a>
+          </Link>
         </div>
 
         <Form.Item>
