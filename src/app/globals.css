@@ -63,3 +63,17 @@ body {
 .ant-menu-submenu-selected > .ant-menu-submenu-title {
   color: #6dbd44 !important;
 }
+
+
+/* Jodit editor custom styles */
+.jodit-container {
+  border-radius: 6px !important;
+}
+
+.jodit-toolbar {
+  border-radius: 6px 6px 0 0 !important;
+}
+
+.jodit-workplace {
+  border-radius: 0 0 6px 6px !important;
+}
