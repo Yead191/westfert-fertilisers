@@ -21,6 +21,7 @@ import {
 import Image from "next/image";
 import { toast } from "sonner";
 import { usePathname, useRouter } from "next/navigation";
+import Link from "next/link";
 
 const { Sider, Header, Content } = Layout;
 const { Title, Text } = Typography;
@@ -140,7 +141,8 @@ export default function DashboardSidebar({
         }}
       >
         {/* Logo Section */}
-        <div
+        <Link
+          href={"/analytics"}
           style={{
             padding: "16px",
             borderBottom: "1px solid #f0f0f0",
@@ -175,7 +177,7 @@ export default function DashboardSidebar({
               />
             </div>
           )}
-        </div>
+        </Link>
 
         {/* Main Menu */}
         <div

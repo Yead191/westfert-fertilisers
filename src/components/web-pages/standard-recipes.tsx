@@ -26,9 +26,9 @@ import {
   EditOutlined,
   DeleteOutlined,
   PlusOutlined,
-  FilePdfOutlined,
-  CloseOutlined,
   UploadOutlined,
+  CloseOutlined,
+  FilePdfOutlined,
 } from "@ant-design/icons";
 import type { ColumnsType } from "antd/es/table";
 import type { UploadProps, MenuProps } from "antd";
@@ -39,9 +39,9 @@ const { Title, Text } = Typography;
 const { TextArea } = Input;
 const { Option } = Select;
 
-interface RawMaterial {
+interface Recipe {
   key: string;
-  materialCode: number;
+  recipeCode: number;
   name: string;
   components: string;
   weight: string;
@@ -58,17 +58,17 @@ interface RawMaterial {
   };
 }
 
-const mockRawMaterials: RawMaterial[] = [
+const mockRecipes: Recipe[] = [
   {
     key: "1",
-    materialCode: 70,
-    name: "KAN",
+    recipeCode: 70,
+    name: "NPKC Recipe 1",
     components: "28N+P+K+Zn+s",
     weight: "1 Tonnes",
     price: "R200.00",
     avatar: "/people/recipe.png?height=40&width=40",
     details: {
-      ingredients: "chloride (KCI), sulfate ( K 2SO 4), or nitrate ( KNO 3)",
+      ingredients: "chloride (KCI), sulfate (K2SO4), or nitrate (KNO3)",
       description:
         "nibh consectetur volutpat at, nibh viverra massa Nam placerat elit. non efficitur. vitae luctus at ultrices urna nisl felis, In Morbi nec Nunc non orci elit leo. sit at, gravida at, est. Nullam Cras Nullam Ut elit. malesuada at, tincidunt quam fringilla convallis. nisl Lorem ultrices Nullam ullamcorper elementum",
       componentBreakdown: {
@@ -80,9 +80,9 @@ const mockRawMaterials: RawMaterial[] = [
   },
   {
     key: "2",
-    materialCode: 69,
-    name: "Ureum",
-    components: "48N+P+K+Zn+s",
+    recipeCode: 69,
+    name: "Potassium nitrate...",
+    components: "28N+P+K+Zn+s",
     weight: "10 Tonnes",
     price: "R1100.00",
     avatar: "/people/recipe.png?height=40&width=40",
@@ -99,9 +99,9 @@ const mockRawMaterials: RawMaterial[] = [
   },
   {
     key: "3",
-    materialCode: 68,
-    name: "MAP+S",
-    components: "12N+20P+K+Zn+6s",
+    recipeCode: 68,
+    name: "NPKC Recipe 2",
+    components: "28N+P+K+Zn+s",
     weight: "20 Tonnes",
     price: "R1000.00",
     avatar: "/people/recipe.png?height=40&width=40",
@@ -117,9 +117,9 @@ const mockRawMaterials: RawMaterial[] = [
   },
   {
     key: "4",
-    materialCode: 67,
-    name: "KCL",
-    components: "N+P+50K+Zn+s",
+    recipeCode: 67,
+    name: "NPKC Recipe 3",
+    components: "28N+P+K+Zn+s",
     weight: "10 Tonnes",
     price: "R1000.00",
     avatar: "/people/recipe.png?height=40&width=40",
@@ -135,8 +135,8 @@ const mockRawMaterials: RawMaterial[] = [
   },
   {
     key: "5",
-    materialCode: 66,
-    name: "CAN",
+    recipeCode: 66,
+    name: "Potassium nitrate...",
     components: "28N+P+K+Zn+s",
     weight: "20 Tonnes",
     price: "R1000.00",
@@ -151,117 +151,61 @@ const mockRawMaterials: RawMaterial[] = [
       },
     },
   },
-  {
-    key: "6",
-    materialCode: 65,
-    name: "MAP 11/22",
-    components: "11N+12.5P+50K+Zn+s",
-    weight: "10 Tonnes",
-    price: "R1000.00",
-    avatar: "/people/recipe.png?height=40&width=40",
-    details: {
-      ingredients: "monoammonium phosphate blend",
-      description: "Balanced NPK fertilizer",
-      componentBreakdown: {
-        potassium: 35,
-        phosphorus: 35,
-        nitrogen: 30,
-      },
-    },
-  },
-  {
-    key: "7",
-    materialCode: 64,
-    name: "Ureum Coated",
-    components: "48N+P+K+Zn+s",
-    weight: "20 Tonnes",
-    price: "R1000.00",
-    avatar: "/people/recipe.png?height=40&width=40",
-    details: {
-      ingredients: "coated urea, slow release",
-      description: "Slow release nitrogen fertilizer",
-      componentBreakdown: {
-        potassium: 10,
-        phosphorus: 10,
-        nitrogen: 80,
-      },
-    },
-  },
-  {
-    key: "8",
-    materialCode: 63,
-    name: "Kaliumsulfaat",
-    components: "N+P+42K+Zn+18s",
-    weight: "10 Tonnes",
-    price: "R1000.00",
-    avatar: "/people/recipe.png?height=40&width=40",
-    details: {
-      ingredients: "potassium sulfate",
-      description: "Sulfur and potassium fertilizer",
-      componentBreakdown: {
-        potassium: 60,
-        phosphorus: 5,
-        nitrogen: 35,
-      },
-    },
-  },
+  // ... (add more mock recipes as needed, up to 10 as shown in the screenshot)
 ];
 
-export default function RawMaterial() {
-  const [selectedMaterial, setSelectedMaterial] = useState<RawMaterial | null>(
-    null
-  );
+export default function StandardRecipes() {
+  const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
   const [isInfoModalVisible, setIsInfoModalVisible] = useState(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [searchText, setSearchText] = useState("");
-  const [materials, setMaterials] = useState<RawMaterial[]>(mockRawMaterials);
+  const [recipes, setRecipes] = useState<Recipe[]>(mockRecipes);
   const [form] = Form.useForm();
 
-  const handleInfoClick = (material: RawMaterial) => {
-    setSelectedMaterial(material);
+  const handleInfoClick = (recipe: Recipe) => {
+    setSelectedRecipe(recipe);
     setIsInfoModalVisible(true);
   };
 
-  const handleEditClick = (material: RawMaterial) => {
-    setSelectedMaterial(material);
+  const handleEditClick = (recipe: Recipe) => {
+    setSelectedRecipe(recipe);
     form.setFieldsValue({
-      name: material.name,
-      components: material.components,
-      weight: material.weight,
-      price: material.price.replace("R", ""),
-      ingredients: material.details?.ingredients,
-      description: material.details?.description,
-      potassium: material.details?.componentBreakdown.potassium,
-      phosphorus: material.details?.componentBreakdown.phosphorus,
-      nitrogen: material.details?.componentBreakdown.nitrogen,
+      name: recipe.name,
+      components: recipe.components,
+      weight: recipe.weight,
+      price: recipe.price.replace("R", ""),
+      ingredients: recipe.details?.ingredients,
+      description: recipe.details?.description,
+      potassium: recipe.details?.componentBreakdown.potassium,
+      phosphorus: recipe.details?.componentBreakdown.phosphorus,
+      nitrogen: recipe.details?.componentBreakdown.nitrogen,
     });
     setIsEditModalVisible(true);
   };
 
-  const handleDelete = (material: RawMaterial) => {
-    setMaterials(materials.filter((item) => item.key !== material.key));
-    message.success(`${material.name} has been deleted successfully`);
+  const handleDelete = (recipe: Recipe) => {
+    setRecipes(recipes.filter((item) => item.key !== recipe.key));
+    message.success(`${recipe.name} has been deleted successfully`);
   };
 
-  const handleAddMember = () => {
+  const handleAddRecipe = () => {
     form.resetFields();
-    setSelectedMaterial(null);
+    setSelectedRecipe(null);
     setIsEditModalVisible(true);
   };
 
   const handleEditSubmit = (values: any) => {
-    if (selectedMaterial) {
-      // Edit existing material
-      const updatedMaterials = materials.map((material) =>
-        material.key === selectedMaterial.key
+    if (selectedRecipe) {
+      const updatedRecipes = recipes.map((recipe) =>
+        recipe.key === selectedRecipe.key
           ? {
-              ...material,
+              ...recipe,
               name: values.name,
               components: values.components,
               weight: values.weight,
               price: `R${values.price}`,
               details: {
-                ...material.details!,
+                ...recipe.details!,
                 ingredients: values.ingredients,
                 description: values.description,
                 componentBreakdown: {
@@ -271,15 +215,14 @@ export default function RawMaterial() {
                 },
               },
             }
-          : material
+          : recipe
       );
-      setMaterials(updatedMaterials);
-      message.success("Material updated successfully");
+      setRecipes(updatedRecipes);
+      message.success("Recipe updated successfully");
     } else {
-      // Add new material
-      const newMaterial: RawMaterial = {
+      const newRecipe: Recipe = {
         key: Date.now().toString(),
-        materialCode: Math.floor(Math.random() * 100) + 50,
+        recipeCode: Math.floor(Math.random() * 100) + 50,
         name: values.name,
         components: values.components,
         weight: values.weight,
@@ -295,8 +238,8 @@ export default function RawMaterial() {
           },
         },
       };
-      setMaterials([...materials, newMaterial]);
-      message.success("Material added successfully");
+      setRecipes([...recipes, newRecipe]);
+      message.success("Recipe added successfully");
     }
     setIsEditModalVisible(false);
     form.resetFields();
@@ -320,7 +263,7 @@ export default function RawMaterial() {
     },
   };
 
-  const materialColumns: ColumnsType<RawMaterial> = [
+  const recipeColumns: ColumnsType<Recipe> = [
     {
       title: "",
       dataIndex: "checkbox",
@@ -328,9 +271,9 @@ export default function RawMaterial() {
       render: () => <Checkbox />,
     },
     {
-      title: "Material Code",
-      dataIndex: "materialCode",
-      key: "materialCode",
+      title: "Recipe Code",
+      dataIndex: "recipeCode",
+      key: "recipeCode",
       width: 120,
     },
     {
@@ -382,8 +325,8 @@ export default function RawMaterial() {
             style={{ color: "#52c41a" }}
           />
           <Popconfirm
-            title="Delete Material"
-            description="Are you sure you want to delete this material?"
+            title="Delete Recipe"
+            description="Are you sure you want to delete this recipe?"
             onConfirm={() => handleDelete(record)}
             okText="Yes"
             cancelText="No"
@@ -399,12 +342,13 @@ export default function RawMaterial() {
     },
   ];
 
-  const filteredMaterials = materials.filter(
-    (material) =>
-      material.name.toLowerCase().includes(searchText.toLowerCase()) ||
-      material.components.toLowerCase().includes(searchText.toLowerCase()) ||
-      material.materialCode.toString().includes(searchText)
+  const filteredRecipes = recipes.filter(
+    (recipe) =>
+      recipe.name.toLowerCase().includes(searchText.toLowerCase()) ||
+      recipe.components.toLowerCase().includes(searchText.toLowerCase()) ||
+      recipe.recipeCode.toString().includes(searchText)
   );
+
   const filterItems: MenuProps["items"] = [
     {
       key: "status",
@@ -414,30 +358,10 @@ export default function RawMaterial() {
         { key: "status-unlock", label: "Unlock" },
       ],
     },
-    {
-      key: "manager",
-      label: "Manager",
-      children: [
-        { key: "manager-locked", label: "Locked" },
-        { key: "manager-unlock", label: "Unlock" },
-      ],
-    },
-    {
-      key: "sales-executive",
-      label: "Sales executive",
-      children: [
-        { key: "sales-locked", label: "Locked" },
-        { key: "sales-unlock", label: "Unlock" },
-      ],
-    },
   ];
 
   return (
-    <div
-      style={{
-        padding: "0 24px",
-      }}
-    >
+    <div style={{ padding: "0 24px" }}>
       <div
         style={{
           backgroundColor: "white",
@@ -454,29 +378,18 @@ export default function RawMaterial() {
           }}
         >
           <Title level={3} style={{ margin: 0 }}>
-            Raw Material
+            Standard Recipes
           </Title>
           <Space>
             <Button
-              onClick={() => {
-                toast.info("Feature coming soon...");
-              }}
-              icon={<FilePdfOutlined style={{ fontSize: "24px" }} />}
-              style={{ color: "#52c41a", padding: "20px" }}
+              onClick={() => toast.info("Feature coming soon...")}
+              icon={<FilePdfOutlined style={{ fontSize: "20px" }} />}
+              style={{ color: "#52c41a", padding: "20px", borderRadius: "50%" }}
             />
-            {/* <Input
-              placeholder="Search here"
-              prefix={<SearchOutlined />}
-              value={searchText}
-              onChange={(e) => setSearchText(e.target.value)}
-              style={{ width: 250 }}
-            /> */}
             <CustomSearchInput
-              setSearchText={setSearchText}
               searchText={searchText}
-              setCurrentPage={function (page: number): void {
-                throw new Error("Function not implemented.");
-              }}
+              setSearchText={setSearchText}
+              setCurrentPage={() => {}} // Placeholder, not used here
             />
             <Dropdown
               menu={{ items: filterItems }}
@@ -497,7 +410,7 @@ export default function RawMaterial() {
               />
             </Dropdown>
             <Button
-              onClick={handleAddMember}
+              onClick={handleAddRecipe}
               type="primary"
               icon={<PlusOutlined />}
               style={{
@@ -509,16 +422,16 @@ export default function RawMaterial() {
                 fontSize: "16px",
               }}
             >
-              Add Member
+              Add Fertilizer
             </Button>
           </Space>
         </div>
 
         <Table
-          columns={materialColumns}
-          dataSource={filteredMaterials}
+          columns={recipeColumns}
+          dataSource={filteredRecipes}
           pagination={{
-            total: filteredMaterials.length,
+            total: filteredRecipes.length,
             pageSize: 10,
             showSizeChanger: true,
             showQuickJumper: true,
@@ -552,7 +465,7 @@ export default function RawMaterial() {
           width={600}
           closeIcon={null}
         >
-          {selectedMaterial && (
+          {selectedRecipe && (
             <div>
               <div
                 style={{
@@ -562,13 +475,13 @@ export default function RawMaterial() {
                   marginBottom: "24px",
                 }}
               >
-                <Avatar src={selectedMaterial.avatar} size={80} />
+                <Avatar src={selectedRecipe.avatar} size={80} />
                 <div>
                   <Title level={4} style={{ margin: 0, marginBottom: "8px" }}>
-                    NPKC Fertiliser
+                    {selectedRecipe.name}
                   </Title>
                   <Text style={{ color: "#52c41a", fontSize: "16px" }}>
-                    {selectedMaterial.components}
+                    {selectedRecipe.components}
                   </Text>
                 </div>
               </div>
@@ -578,7 +491,7 @@ export default function RawMaterial() {
                   <Text type="secondary">Weight:</Text>
                   <div>
                     <Text strong style={{ fontSize: "18px" }}>
-                      {selectedMaterial.weight.split(" ")[0]} tn
+                      {selectedRecipe.weight.split(" ")[0]} tn
                     </Text>
                   </div>
                 </Col>
@@ -586,7 +499,7 @@ export default function RawMaterial() {
                   <Text type="secondary">Price:</Text>
                   <div>
                     <Text strong style={{ fontSize: "18px" }}>
-                      {selectedMaterial.price.replace(".00", "")}
+                      {selectedRecipe.price.replace(".00", "")}
                     </Text>
                   </div>
                 </Col>
@@ -604,12 +517,12 @@ export default function RawMaterial() {
                   >
                     <Text>Potassium (K)</Text>
                     <Text>
-                      {selectedMaterial.details?.componentBreakdown.potassium}%
+                      {selectedRecipe.details?.componentBreakdown.potassium}%
                     </Text>
                   </div>
                   <Progress
                     percent={
-                      selectedMaterial.details?.componentBreakdown.potassium
+                      selectedRecipe.details?.componentBreakdown.potassium
                     }
                     showInfo={false}
                   />
@@ -624,12 +537,12 @@ export default function RawMaterial() {
                   >
                     <Text>Phosphorus (P)</Text>
                     <Text>
-                      {selectedMaterial.details?.componentBreakdown.phosphorus}%
+                      {selectedRecipe.details?.componentBreakdown.phosphorus}%
                     </Text>
                   </div>
                   <Progress
                     percent={
-                      selectedMaterial.details?.componentBreakdown.phosphorus
+                      selectedRecipe.details?.componentBreakdown.phosphorus
                     }
                     showInfo={false}
                   />
@@ -644,12 +557,12 @@ export default function RawMaterial() {
                   >
                     <Text>Nitrogen (N)</Text>
                     <Text>
-                      {selectedMaterial.details?.componentBreakdown.nitrogen}%
+                      {selectedRecipe.details?.componentBreakdown.nitrogen}%
                     </Text>
                   </div>
                   <Progress
                     percent={
-                      selectedMaterial.details?.componentBreakdown.nitrogen
+                      selectedRecipe.details?.componentBreakdown.nitrogen
                     }
                     showInfo={false}
                   />
@@ -658,13 +571,13 @@ export default function RawMaterial() {
 
               <div style={{ marginBottom: "16px" }}>
                 <Title level={5}>Ingredients</Title>
-                <Text>{selectedMaterial.details?.ingredients}</Text>
+                <Text>{selectedRecipe.details?.ingredients}</Text>
               </div>
 
               <div>
                 <Title level={5}>Details</Title>
                 <Text type="secondary">
-                  {selectedMaterial.details?.description}
+                  {selectedRecipe.details?.description}
                 </Text>
               </div>
             </div>
@@ -681,9 +594,7 @@ export default function RawMaterial() {
                 alignItems: "center",
               }}
             >
-              <span>
-                {selectedMaterial ? "Edit" : "Add"} Recipes or Raw Material
-              </span>
+              <span>{selectedRecipe ? "Edit" : "Add"} Fertilizer</span>
               <Button
                 icon={<CloseOutlined />}
                 type="text"
@@ -705,7 +616,7 @@ export default function RawMaterial() {
                   name="name"
                   rules={[{ required: true, message: "Please enter name" }]}
                 >
-                  <Input placeholder="NPKC Fertiliser" />
+                  <Input placeholder="NPKC Recipe 1" />
                 </Form.Item>
 
                 <Row gutter={16}>
@@ -773,7 +684,7 @@ export default function RawMaterial() {
                 <Form.Item label="Ingredients" name="ingredients">
                   <TextArea
                     rows={3}
-                    placeholder="chloride (KCI), sulfate ( K 2SO 4), or nitrate ( KNO 3)"
+                    placeholder="chloride (KCI), sulfate (K2SO4), or nitrate (KNO3)"
                   />
                 </Form.Item>
 
@@ -829,7 +740,7 @@ export default function RawMaterial() {
                     }}
                   >
                     <Title level={5} style={{ margin: 0 }}>
-                      Raw Materials
+                      Components
                     </Title>
                     <Button
                       size="small"
