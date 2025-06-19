@@ -344,7 +344,7 @@ export default function EmployeeDetailsModal({
                       }}
                     >
                       <Typography.Text strong>Name</Typography.Text>
-                      <Typography.Text>: {employee?.name}</Typography.Text>
+                      <Typography.Text> {employee?.name}</Typography.Text>
                     </div>
                     <div
                       style={{
@@ -353,9 +353,7 @@ export default function EmployeeDetailsModal({
                       }}
                     >
                       <Typography.Text strong>Position</Typography.Text>
-                      <Typography.Text>
-                        : {employee?.designation}
-                      </Typography.Text>
+                      <Typography.Text>{employee?.designation}</Typography.Text>
                     </div>
                     <div
                       style={{
@@ -364,7 +362,7 @@ export default function EmployeeDetailsModal({
                       }}
                     >
                       <Typography.Text strong>Id. no.</Typography.Text>
-                      <Typography.Text>: {employee?.id}</Typography.Text>
+                      <Typography.Text> {employee?.id}</Typography.Text>
                     </div>
                     <div
                       style={{
@@ -373,7 +371,7 @@ export default function EmployeeDetailsModal({
                       }}
                     >
                       <Typography.Text strong>Email</Typography.Text>
-                      <Typography.Text>: {employee?.email}</Typography.Text>
+                      <Typography.Text> {employee?.email}</Typography.Text>
                     </div>
                     <div
                       style={{
@@ -382,7 +380,7 @@ export default function EmployeeDetailsModal({
                       }}
                     >
                       <Typography.Text strong>Contact Number</Typography.Text>
-                      <Typography.Text>: {employee?.phone}</Typography.Text>
+                      <Typography.Text> {employee?.phone}</Typography.Text>
                     </div>
                     <div
                       style={{
@@ -391,7 +389,7 @@ export default function EmployeeDetailsModal({
                       }}
                     >
                       <Typography.Text strong>Date of birth</Typography.Text>
-                      <Typography.Text>: 12 nov, 2024</Typography.Text>
+                      <Typography.Text> 12 nov, 2024</Typography.Text>
                     </div>
                     <div
                       style={{
@@ -400,7 +398,7 @@ export default function EmployeeDetailsModal({
                       }}
                     >
                       <Typography.Text strong>Gender</Typography.Text>
-                      <Typography.Text>: Male</Typography.Text>
+                      <Typography.Text> Male</Typography.Text>
                     </div>
                     <div
                       style={{
@@ -412,7 +410,7 @@ export default function EmployeeDetailsModal({
                       <Typography.Text
                         style={{ textAlign: "right", maxWidth: "200px" }}
                       >
-                        : 284 Daffodil Dr, Mount Frere, Eastern Cape -5088 South
+                        284 Daffodil Dr, Mount Frere, Eastern Cape -5088 South
                         Africa
                       </Typography.Text>
                     </div>

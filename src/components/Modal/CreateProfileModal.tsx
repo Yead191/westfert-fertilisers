@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState } from "react";
 import { Modal, Input, Button, Select, Form } from "antd";
 import { EyeInvisibleOutlined, EyeOutlined } from "@ant-design/icons";
@@ -25,43 +23,27 @@ const CreateProfileModal: React.FC<CreateProfileModalProps> = ({
   onSave,
 }) => {
   const [form] = Form.useForm();
-  const [formData, setFormData] = useState({
-    userName: "",
-    designationType: "Sales Executive",
-    email: "",
-    password: "",
-    confirmPassword: "",
-  });
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
-  const handleChange = (field: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-  };
 
   const handleSave = () => {
     form
       .validateFields()
       .then(() => {
+        // Get values directly from form
+        const formData = form.getFieldsValue();
+
         if (formData.password !== formData.confirmPassword) {
           toast.error("Passwords do not match!");
           return;
         }
+
         onSave(formData);
-        setFormData({
-          userName: "",
-          designationType: "Sales Executive",
-          email: "",
-          password: "",
-          confirmPassword: "",
-        });
+        form.resetFields();
         onClose();
       })
       .catch((error) => {
         console.log("Validation failed:", error);
-        toast.error("validation failed, Fill up all required fields");
+        // Optional: Handle the validation failure message here
       });
-    form.resetFields();
   };
 
   return (
@@ -82,19 +64,20 @@ const CreateProfileModal: React.FC<CreateProfileModalProps> = ({
         <Form
           form={form}
           layout="vertical"
-          initialValues={formData}
-          onValuesChange={(changedValues, allValues) => setFormData(allValues)}
+          initialValues={{
+            userName: "",
+            designationType: "Sales Executive",
+            email: "",
+            password: "",
+            confirmPassword: "",
+          }}
         >
           <Form.Item
             name="userName"
             label="User Name"
             rules={[{ required: true, message: "Please input your username!" }]}
           >
-            <Input
-              value={formData.userName}
-              onChange={(e) => handleChange("userName", e.target.value)}
-              placeholder="tk"
-            />
+            <Input placeholder="tk" />
           </Form.Item>
 
           <Form.Item
@@ -104,10 +87,7 @@ const CreateProfileModal: React.FC<CreateProfileModalProps> = ({
               { required: true, message: "Please select designation type!" },
             ]}
           >
-            <Select
-              value={formData.designationType}
-              onChange={(value) => handleChange("designationType", value)}
-            >
+            <Select>
               <Option value="Sales Executive">Sales Executive</Option>
               <Option value="Manager">Manager</Option>
               <Option value="Other">Other</Option>
@@ -125,11 +105,7 @@ const CreateProfileModal: React.FC<CreateProfileModalProps> = ({
               },
             ]}
           >
-            <Input
-              value={formData.email}
-              onChange={(e) => handleChange("email", e.target.value)}
-              placeholder="tk@mymzo.co.za"
-            />
+            <Input placeholder="tk@mymzo.co.za" />
           </Form.Item>
 
           <Form.Item
@@ -138,8 +114,6 @@ const CreateProfileModal: React.FC<CreateProfileModalProps> = ({
             rules={[{ required: true, message: "Please input your password!" }]}
           >
             <Input.Password
-              value={formData.password}
-              onChange={(e) => handleChange("password", e.target.value)}
               placeholder="Password"
               iconRender={(visible) =>
                 visible ? <EyeOutlined /> : <EyeInvisibleOutlined />
@@ -155,8 +129,6 @@ const CreateProfileModal: React.FC<CreateProfileModalProps> = ({
             ]}
           >
             <Input.Password
-              value={formData.confirmPassword}
-              onChange={(e) => handleChange("confirmPassword", e.target.value)}
               placeholder="Confirm Password"
               iconRender={(visible) =>
                 visible ? <EyeOutlined /> : <EyeInvisibleOutlined />

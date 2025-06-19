@@ -388,8 +388,21 @@ export default function StaffListPage() {
             <Input
               placeholder="Search here"
               allowClear
-              style={{ width: 300, padding: "8px 12px" }}
-              suffix={<SearchOutlined />}
+              style={{
+                width: 350,
+                padding: "4px 6px 4px 10px",
+                borderRadius: "30px",
+              }}
+              suffix={
+                <SearchOutlined
+                  style={{
+                    fontSize: "18px",
+                    borderRadius: "50%",
+                    padding: "10px",
+                    backgroundColor: "#D2EBC5",
+                  }}
+                />
+              }
               value={searchText}
               onChange={(e) => {
                 setSearchText(e.target.value);
@@ -397,13 +410,15 @@ export default function StaffListPage() {
               }}
             />
             <Button
-              icon={<FilterOutlined />}
               style={{
-                boxShadow: "0 2px 24px rgba(0,0,0,0.0)",
+                padding: "22px",
                 borderRadius: "50%",
-                padding: "16px",
+                boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
               }}
-            ></Button>
+              icon={
+                <FilterOutlined style={{ fontSize: "20px", padding: "10px" }} />
+              }
+            />
             <Button
               onClick={() => {
                 setIsCreateProfileModalVisible(true);
