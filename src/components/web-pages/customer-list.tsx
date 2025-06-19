@@ -13,6 +13,7 @@ import {
   Divider,
   Tag,
   Checkbox,
+  ConfigProvider,
 } from "antd";
 import {
   SearchOutlined,
@@ -20,6 +21,8 @@ import {
   InfoCircleOutlined,
 } from "@ant-design/icons";
 import type { ColumnsType } from "antd/es/table";
+import CustomSearchInput from "../ui/CustomInput";
+import { toast } from "sonner";
 
 const { Title, Text } = Typography;
 
@@ -238,6 +241,9 @@ export default function CustomerList() {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [searchText, setSearchText] = useState("");
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+  // Add pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
   const handleInfoClick = (customer: Customer) => {
     setSelectedCustomer(customer);
@@ -265,12 +271,12 @@ export default function CustomerList() {
   };
 
   const customerColumns: ColumnsType<Customer> = [
-    {
-      title: "",
-      dataIndex: "checkbox",
-      width: 50,
-      render: () => <Checkbox />,
-    },
+    // {
+    //   title: "",
+    //   dataIndex: "checkbox",
+    //   width: 50,
+    //   render: () => <Checkbox />,
+    // },
     {
       title: "S.no",
       dataIndex: "sno",
@@ -368,6 +374,7 @@ export default function CustomerList() {
       width: 80,
       render: () => (
         <Button
+          onClick={() => toast.info("Feature coming soon!")}
           type="text"
           icon={<InfoCircleOutlined />}
           style={{ color: "#1890ff" }}
@@ -376,11 +383,18 @@ export default function CustomerList() {
     },
   ];
 
+  // Filter customers based on search text
   const filteredCustomers = mockCustomers.filter(
     (customer) =>
       customer.name.toLowerCase().includes(searchText.toLowerCase()) ||
       customer.email.toLowerCase().includes(searchText.toLowerCase()) ||
       customer.sno.toLowerCase().includes(searchText.toLowerCase())
+  );
+
+  // Calculate paginated data
+  const paginatedCustomers = filteredCustomers.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize
   );
 
   const rowSelection = {
@@ -390,13 +404,16 @@ export default function CustomerList() {
     },
   };
 
+  // Handle pagination changes
+  const handleTableChange = (pagination: any) => {
+    setCurrentPage(pagination.current);
+    setPageSize(pagination.pageSize);
+  };
+
   return (
     <div
       style={{
         padding: "0 24px 24px",
-        // backgroundColor: "#f5f5f5",
-        // minHeight: "100vh",
-        // borderRadius: "32px",
       }}
     >
       <div
@@ -432,7 +449,10 @@ export default function CustomerList() {
                 />
               }
               value={searchText}
-              onChange={(e) => setSearchText(e.target.value)}
+              onChange={(e) => {
+                setSearchText(e.target.value);
+                setCurrentPage(1); // Reset to first page on search
+              }}
               style={{ width: 350, padding: "4px 6px", borderRadius: "30px" }}
             />
             <Button
@@ -449,123 +469,161 @@ export default function CustomerList() {
         </div>
 
         <Table
+          rowSelection={rowSelection}
           columns={customerColumns}
-          dataSource={filteredCustomers}
+          dataSource={paginatedCustomers} // Use paginated data
           pagination={{
-            total: 150,
-            pageSize: 15,
-            showSizeChanger: false,
+            total: filteredCustomers.length, // Use filtered data length
+            pageSize: pageSize,
+            current: currentPage,
+            showSizeChanger: true,
+            pageSizeOptions: ["10", "15", "20"], // Allow changing page size
             showQuickJumper: false,
             showTotal: (total, range) =>
               `Showing ${range[0]}-${range[1]} out of ${total}`,
           }}
+          onChange={handleTableChange} // Handle pagination changes
           size="middle"
         />
-
-        <Modal
-          title="Customer Details"
-          open={isModalVisible}
-          onCancel={handleModalClose}
-          footer={null}
-          width={1200}
-          styles={{
-            body: { padding: "24px" },
+        <ConfigProvider
+          theme={{
+            components: {
+              Modal: {
+                contentBg: "rgb(241,241,249)",
+                headerBg: "rgb(241,241,249)",
+              },
+            },
           }}
         >
-          {selectedCustomer && (
-            <div>
-              <div
-                style={{ display: "flex", gap: "24px", marginBottom: "32px" }}
-              >
-                <Avatar
-                  size={120}
-                  src="/placeholder.svg?height=120&width=120"
-                  style={{ backgroundColor: "#52c41a" }}
-                />
-                <div style={{ flex: 1 }}>
-                  <div style={{ marginBottom: "16px" }}>
-                    <Text
-                      strong
-                      style={{ display: "inline-block", width: "140px" }}
-                    >
-                      Customer Name
-                    </Text>
-                    <Text>: {selectedCustomer.name}</Text>
-                  </div>
-                  <div style={{ marginBottom: "16px" }}>
-                    <Text
-                      strong
-                      style={{ display: "inline-block", width: "140px" }}
-                    >
-                      Address
-                    </Text>
-                    <Text>: {selectedCustomer.address}</Text>
-                  </div>
-                  <div style={{ marginBottom: "16px" }}>
-                    <Text
-                      strong
-                      style={{ display: "inline-block", width: "140px" }}
-                    >
-                      Serial Number
-                    </Text>
-                    <Text>: {selectedCustomer.sno}</Text>
-                  </div>
-                  <div style={{ marginBottom: "16px" }}>
-                    <Text
-                      strong
-                      style={{ display: "inline-block", width: "140px" }}
-                    >
-                      Email
-                    </Text>
-                    <Text>: {selectedCustomer.email}</Text>
-                  </div>
-                  <div>
-                    <Text
-                      strong
-                      style={{ display: "inline-block", width: "140px" }}
-                    >
-                      Contact Number
-                    </Text>
-                    <Text>: {selectedCustomer.contactNumber}</Text>
-                  </div>
-                </div>
-              </div>
-
-              <Divider />
-
+          <Modal
+            title="Customer Details"
+            open={isModalVisible}
+            onCancel={handleModalClose}
+            footer={null}
+            width={1200}
+            styles={{
+              body: { paddingTop: "24px" },
+            }}
+          >
+            {selectedCustomer && (
               <div>
                 <div
                   style={{
                     display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
+                    gap: "24px",
                     marginBottom: "16px",
+                    backgroundColor: "white",
+                    padding: "24px",
+                    borderRadius: "16px",
+                    alignItems: "center",
                   }}
                 >
-                  <Title level={4} style={{ margin: 0 }}>
-                    Quotes List
-                  </Title>
-                  <Space>
-                    <Input
-                      placeholder="Search here"
-                      prefix={<SearchOutlined />}
-                      style={{ width: 200 }}
-                    />
-                    <Button icon={<FilterOutlined />} />
-                  </Space>
+                  <Avatar
+                    size={200}
+                    src="/people/customer.png?height=250&width=250"
+                    style={{}}
+                  />
+                  <div style={{ flex: 1 }}>
+                    <div style={{ marginBottom: "16px" }}>
+                      <Text
+                        strong
+                        style={{ display: "inline-block", width: "140px" }}
+                      >
+                        Customer Name
+                      </Text>
+                      <Text>: {selectedCustomer.name}</Text>
+                    </div>
+                    <div style={{ marginBottom: "16px" }}>
+                      <Text
+                        strong
+                        style={{ display: "inline-block", width: "140px" }}
+                      >
+                        Address
+                      </Text>
+                      <Text>: {selectedCustomer.address}</Text>
+                    </div>
+                    <div style={{ marginBottom: "16px" }}>
+                      <Text
+                        strong
+                        style={{ display: "inline-block", width: "140px" }}
+                      >
+                        Serial Number
+                      </Text>
+                      <Text>: {selectedCustomer.sno}</Text>
+                    </div>
+                    <div style={{ marginBottom: "16px" }}>
+                      <Text
+                        strong
+                        style={{ display: "inline-block", width: "140px" }}
+                      >
+                        Email
+                      </Text>
+                      <Text>: {selectedCustomer.email}</Text>
+                    </div>
+                    <div>
+                      <Text
+                        strong
+                        style={{ display: "inline-block", width: "140px" }}
+                      >
+                        Contact Number
+                      </Text>
+                      <Text>: {selectedCustomer.contactNumber}</Text>
+                    </div>
+                  </div>
                 </div>
 
-                <Table
-                  columns={quoteColumns}
-                  dataSource={mockQuotes}
-                  pagination={false}
-                  size="small"
-                  scroll={{ x: 1000 }}
-                />
+                <div className="bg-white p-6 rounded-2xl">
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      marginBottom: "16px",
+                    }}
+                  >
+                    <Title level={4} style={{ margin: 0 }}>
+                      Quotes List
+                    </Title>
+                    <Space>
+                      {/* <Input
+                        placeholder="Search here"
+                        prefix={<SearchOutlined />}
+                        style={{ width: 200 }}
+                      /> */}
+                      <Input
+                        placeholder="Search here"
+                        prefix={
+                          <SearchOutlined
+                            style={{
+                              fontSize: "18px",
+                              borderRadius: "50%",
+                              padding: "5px",
+                              backgroundColor: "#D2EBC5",
+                            }}
+                          />
+                        }
+                        style={{
+                          width: 250,
+                          padding: "4px 6px",
+                          borderRadius: "30px",
+                        }}
+                      />
+                      <Button icon={<FilterOutlined />} />
+                    </Space>
+                  </div>
+
+                  <Table
+                    columns={quoteColumns}
+                    dataSource={mockQuotes}
+                    pagination={false}
+                    size="small"
+                    scroll={{ x: 1000 }}
+                  />
+                </div>
               </div>
-            </div>
-          )}
-        </Modal>
+            )}
+          </Modal>
+        </ConfigProvider>
       </div>
     </div>
   );

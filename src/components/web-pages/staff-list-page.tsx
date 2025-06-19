@@ -192,7 +192,7 @@ export default function StaffListPage() {
     {
       title: (
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <Checkbox
+          {/* <Checkbox
             indeterminate={
               selectedRowKeys.length > 0 &&
               selectedRowKeys.length < staffData.length
@@ -205,7 +205,7 @@ export default function StaffListPage() {
                 setSelectedRowKeys([]);
               }
             }}
-          />
+          /> */}
           <span style={{ fontWeight: "500" }}>ID No.</span>
         </div>
       ),
@@ -214,7 +214,7 @@ export default function StaffListPage() {
       width: 120,
       render: (text: string, record: StaffMember) => (
         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-          <Checkbox
+          {/* <Checkbox
             checked={selectedRowKeys.includes(record.key)}
             onChange={(e) => {
               if (e.target.checked) {
@@ -225,7 +225,7 @@ export default function StaffListPage() {
                 );
               }
             }}
-          />
+          /> */}
           <span style={{ fontSize: "12px", color: "#666" }}>{text}</span>
         </div>
       ),
