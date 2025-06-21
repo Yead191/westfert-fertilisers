@@ -3,6 +3,7 @@ import DashboardSidebar from "@/components/web-pages/dashboard-sidebar";
 import React, { ReactNode, useState } from "react";
 import { Card, Row, Col, Typography, Select, Space, Badge, Avatar } from "antd";
 import { BellOutlined } from "@ant-design/icons";
+import Link from "next/link";
 
 const layout = ({ children }: { children: ReactNode }) => {
   const [collapsed, setCollapsed] = useState(false);
@@ -50,10 +51,10 @@ const layout = ({ children }: { children: ReactNode }) => {
                   }}
                 />
               </Badge>
-              <Space>
+              <Link href={"/admin-profile"} className="flex items-center gap-2">
                 <Avatar src="/user.jpg?height=32&width=32" size={32} />
                 <span style={{ color: "#333" }}>Admin Yead</span>
-              </Space>
+              </Link>
             </Space>
           </div>
         </div>

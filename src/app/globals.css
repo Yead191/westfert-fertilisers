@@ -18,11 +18,16 @@
     --foreground: #ededed;
   }
 }
+html {
+  scroll-behavior: smooth;
+}
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  scroll-behavior: smooth;
+
 }
 
 @import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
@@ -53,8 +58,11 @@ body {
   border-radius: 0px 30px 30px 0px !important;
 }
 
-.ant-menu-item:hover .ant-menu-item-icon {
+.ant-menu-item:hover {
   color: #6dbd44 !important;
+}
+.ant-menu-item-selected:hover {
+  color: white !important;
 }
 
 /* .ant-menu-submenu-active {
@@ -63,7 +71,6 @@ body {
 .ant-menu-submenu-selected > .ant-menu-submenu-title {
   color: #6dbd44 !important;
 }
-
 
 /* Jodit editor custom styles */
 .jodit-container {
@@ -76,4 +83,8 @@ body {
 
 .jodit-workplace {
   border-radius: 0 0 6px 6px !important;
+}
+
+.active {
+  color: white;
 }

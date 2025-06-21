@@ -64,11 +64,11 @@ export default function DashboardSidebar({
       icon: <FileTextOutlined />,
       label: "Quote Update",
     },
-    {
-      key: "quote-history",
-      icon: <HistoryOutlined />,
-      label: "Quote History",
-    },
+    // {
+    //   key: "quote-history",
+    //   icon: <HistoryOutlined />,
+    //   label: "Quote History",
+    // },
     {
       key: "raw-material",
       icon: <InboxOutlined />,
@@ -129,7 +129,7 @@ export default function DashboardSidebar({
     });
   };
   return (
-    <Layout style={{ minHeight: "100vh", position: "fixed" }}>
+    <Layout style={{ minHeight: "100vh", position: "fixed", zIndex: 10 }}>
       <Sider
         // collapsible
         collapsed={collapsed}
@@ -190,6 +190,7 @@ export default function DashboardSidebar({
           }}
         >
           <Menu
+            // className={pathname === selectedKey ? "active" : ""}
             mode="inline"
             selectedKeys={[selectedKey]}
             items={menuItems}

@@ -458,11 +458,9 @@ export default function RawMaterial() {
           </Title>
           <Space>
             <Button
-              onClick={() => {
-                toast.info("Feature coming soon...");
-              }}
-              icon={<FilePdfOutlined style={{ fontSize: "24px" }} />}
-              style={{ color: "#52c41a", padding: "20px" }}
+              onClick={() => toast.info("Feature coming soon...")}
+              icon={<FilePdfOutlined style={{ fontSize: "20px" }} />}
+              style={{ color: "#52c41a", padding: "20px", borderRadius: "50%" }}
             />
             {/* <Input
               placeholder="Search here"
