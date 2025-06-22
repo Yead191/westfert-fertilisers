@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Modal, Input, Button, Select, Form } from "antd";
 import { EyeInvisibleOutlined, EyeOutlined } from "@ant-design/icons";
 import { toast } from "sonner";
+import useBaseUrl from "@/hooks/useBaseUrl";
 
 const { Option } = Select;
 
@@ -15,20 +16,23 @@ interface CreateProfileModalProps {
     password: string;
     confirmPassword: string;
   }) => void;
+  refetch: () => void;
 }
 
 const CreateProfileModal: React.FC<CreateProfileModalProps> = ({
   visible,
   onClose,
   onSave,
+  refetch,
 }) => {
   const [form] = Form.useForm();
 
-  const handleSave = () => {
+  const baseUrl = useBaseUrl();
+
+  const handleSave = async () => {
     form
       .validateFields()
-      .then(() => {
-        // Get values directly from form
+      .then(async () => {
         const formData = form.getFieldsValue();
 
         if (formData.password !== formData.confirmPassword) {
@@ -36,13 +40,47 @@ const CreateProfileModal: React.FC<CreateProfileModalProps> = ({
           return;
         }
 
-        onSave(formData);
-        form.resetFields();
-        onClose();
+        try {
+          toast.promise(
+            (async () => {
+              const res = await fetch(`${baseUrl}/api/auth/register`, {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  userName: formData.userName,
+                  email: formData.email,
+                  password: formData.password,
+                  designation: formData.designationType,
+                }),
+                credentials: "include",
+              });
+
+              const data = await res.json();
+
+              if (!res.ok) {
+                // Throw the error message returned from the backend
+                throw new Error(data.message || "Something went wrong");
+              }
+              refetch();
+              form.resetFields();
+              onClose();
+              return "Account created successfully!";
+            })(),
+            {
+              loading: "Creating account...",
+              success: (msg) => <b>{msg}</b>,
+              error: (err) => err.message || "Failed to create account",
+            }
+          );
+        } catch (error) {
+          console.error("Unexpected error:", error);
+        }
       })
       .catch((error) => {
         console.log("Validation failed:", error);
-        // Optional: Handle the validation failure message here
+        toast.error("Please fill in all required fields correctly");
       });
   };
 

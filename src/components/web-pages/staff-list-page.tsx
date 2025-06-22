@@ -1,17 +1,18 @@
 "use client";
 
-import React, { useState } from "react";
+import type React from "react";
+import { useState, useMemo } from "react";
 import {
   Table,
   Input,
   Button,
   Space,
   Tag,
-  Checkbox,
   Typography,
   Card,
   Tooltip,
   ConfigProvider,
+  Spin,
 } from "antd";
 import {
   SearchOutlined,
@@ -25,6 +26,8 @@ import type { ColumnsType } from "antd/es/table";
 import EmployeeDetailsModal from "../Modal/EmployeeDetailsModal";
 import { toast } from "sonner";
 import CreateProfileModal from "../Modal/CreateProfileModal";
+import { useAllUserQuery } from "@/redux/feature/users/usersSlice";
+import Spinner from "../Spinner";
 
 const { Title } = Typography;
 
@@ -36,145 +39,17 @@ interface StaffMember {
   phone: string;
   designation: string;
   status: "active" | "inactive";
+  createdAt: string;
 }
 
-const staffData: StaffMember[] = [
-  {
-    key: "1",
-    id: "MM4178MRV2",
-    name: "Admin Humphrey",
-    email: "mr101@gmail.ru",
-    phone: "(+33)7 00 55 59 27",
-    designation: "Sales executive",
-    status: "active",
-  },
-  {
-    key: "2",
-    id: "AB4578DCD2",
-    name: "Siphokazi Selebe",
-    email: "mr101@gmail.ru",
-    phone: "(+33)7 00 55 59 27",
-    designation: "Sales executive",
-    status: "active",
-  },
-  {
-    key: "3",
-    id: "FF4578EDD4",
-    name: "Alison Moloi",
-    email: "mr101@gmail.ru",
-    phone: "(+33)7 00 55 59 27",
-    designation: "Sales executive",
-    status: "inactive",
-  },
-  {
-    key: "4",
-    id: "BB4578EFD2",
-    name: "Mr. Nadir",
-    email: "xterris@gmail.com",
-    phone: "(+33)7 00 55 59 27",
-    designation: "Manager",
-    status: "active",
-  },
-  {
-    key: "5",
-    id: "FF4578EDD4",
-    name: "Babalwa Moloi",
-    email: "irnabela@gmail.com",
-    phone: "(+33)7 00 55 59 27",
-    designation: "Manager",
-    status: "active",
-  },
-  {
-    key: "6",
-    id: "FH4578ERV2",
-    name: "Rashied Naaido",
-    email: "codence@gmail.com",
-    phone: "(+33)7 00 55 59 27",
-    designation: "Manager",
-    status: "active",
-  },
-  {
-    key: "7",
-    id: "CY6790FJF7",
-    name: "Candice Ryan",
-    email: "quasiah@gmail.com",
-    phone: "(+33)7 00 55 59 27",
-    designation: "Manager",
-    status: "active",
-  },
-  {
-    key: "8",
-    id: "MM4178MRV2",
-    name: "Mark Russell",
-    email: "xeno@yandex.ru",
-    phone: "(+33)7 00 55 59 27",
-    designation: "Manager",
-    status: "active",
-  },
-  {
-    key: "9",
-    id: "FH4578ERV2",
-    name: "Sharief Isaacs",
-    email: "redaniel@gmail.com",
-    phone: "(+33)7 00 55 59 27",
-    designation: "Manager",
-    status: "active",
-  },
-  {
-    key: "10",
-    id: "FF4578EDD4",
-    name: "Asad Ujjaman",
-    email: "warn@mail.ru",
-    phone: "(+33)7 00 55 59 27",
-    designation: "Sales executive",
-    status: "active",
-  },
-  {
-    key: "11",
-    id: "FH4578ERV2",
-    name: "Shameemah Salie",
-    email: "joie@gmail.com",
-    phone: "(+33)7 00 55 59 27",
-    designation: "Sales executive",
-    status: "active",
-  },
-  {
-    key: "12",
-    id: "GM4134ER3C",
-    name: "Shameemah Salie",
-    email: "ziar@gmail.com",
-    phone: "(+33)7 00 55 59 27",
-    designation: "Sales executive",
-    status: "active",
-  },
-  {
-    key: "13",
-    id: "GM4134ER3C",
-    name: "Shameemah Salie",
-    email: "ahana@mail.ru",
-    phone: "(+33)7 00 55 59 27",
-    designation: "Sales executive",
-    status: "active",
-  },
-  {
-    key: "14",
-    id: "FH4578ERV2",
-    name: "Shameemah Salie",
-    email: "ahana@mail.ru",
-    phone: "(+33)7 00 55 59 27",
-    designation: "Sales executive",
-    status: "active",
-  },
-  {
-    key: "15",
-    id: "AB4578DCD2",
-    name: "Shameemah Salie",
-    email: "joie@gmail.com",
-    phone: "(+33)7 00 55 59 27",
-    designation: "Sales executive",
-    status: "active",
-  },
-];
+interface ApiStaffData {
+  _id: string;
+  userName: string;
+  email: string;
+  password: string;
+  designation: string;
+  createdAt: string;
+}
 
 export default function StaffListPage() {
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
@@ -188,24 +63,28 @@ export default function StaffListPage() {
   const [isCreateProfileModalVisible, setIsCreateProfileModalVisible] =
     useState(false);
 
+  const { data: users, isLoading, error, refetch } = useAllUserQuery({});
+  // console.log(users);
+  // Transform API data to match component structure
+  const transformedStaffData: StaffMember[] = useMemo(() => {
+    if (!users) return [];
+
+    return users.map((user: ApiStaffData, index: number) => ({
+      key: user._id,
+      id: user._id.slice(-8).toUpperCase(), // Use last 8 characters of _id as display ID
+      name: user.userName,
+      email: user.email,
+      phone: "", // Not available in your data structure
+      designation: user.designation,
+      status: "active" as const, // Default to active since status isn't in your data
+      createdAt: user.createdAt,
+    }));
+  }, [users]);
+
   const columns: ColumnsType<StaffMember> = [
     {
       title: (
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          {/* <Checkbox
-            indeterminate={
-              selectedRowKeys.length > 0 &&
-              selectedRowKeys.length < staffData.length
-            }
-            checked={selectedRowKeys.length === staffData.length}
-            onChange={(e) => {
-              if (e.target.checked) {
-                setSelectedRowKeys(staffData.map((item) => item.key));
-              } else {
-                setSelectedRowKeys([]);
-              }
-            }}
-          /> */}
           <span style={{ fontWeight: "500" }}>ID No.</span>
         </div>
       ),
@@ -214,18 +93,6 @@ export default function StaffListPage() {
       width: 120,
       render: (text: string, record: StaffMember) => (
         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-          {/* <Checkbox
-            checked={selectedRowKeys.includes(record.key)}
-            onChange={(e) => {
-              if (e.target.checked) {
-                setSelectedRowKeys([...selectedRowKeys, record.key]);
-              } else {
-                setSelectedRowKeys(
-                  selectedRowKeys.filter((key) => key !== record.key)
-                );
-              }
-            }}
-          /> */}
           <span style={{ fontSize: "12px", color: "#666" }}>{text}</span>
         </div>
       ),
@@ -240,18 +107,22 @@ export default function StaffListPage() {
       ),
     },
     {
-      title: "email",
+      title: "Email",
       dataIndex: "email",
       key: "email",
       width: 200,
       render: (text: string) => <span style={{ color: "#666" }}>{text}</span>,
     },
     {
-      title: "Company Name",
-      dataIndex: "phone",
-      key: "phone",
+      title: "Created Date",
+      dataIndex: "createdAt",
+      key: "createdAt",
       width: 150,
-      render: (text: string) => <span style={{ color: "#666" }}>{text}</span>,
+      render: (text: string) => (
+        <span style={{ color: "#666" }}>
+          {new Date(text).toLocaleDateString()}
+        </span>
+      ),
     },
     {
       title: "Designation",
@@ -264,6 +135,20 @@ export default function StaffListPage() {
           style={{ border: "none", borderRadius: "4px", fontWeight: "500" }}
         >
           {text}
+        </Tag>
+      ),
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      width: 100,
+      render: (status: string) => (
+        <Tag
+          color={status === "active" ? "green" : "red"}
+          style={{ border: "none", borderRadius: "4px", fontWeight: "500" }}
+        >
+          {status.charAt(0).toUpperCase() + status.slice(1)}
         </Tag>
       ),
     },
@@ -294,19 +179,13 @@ export default function StaffListPage() {
                 // Handle status toggle logic here
                 const newStatus =
                   record.status === "active" ? "inactive" : "active";
-                const updatedData = staffData.map((item) =>
-                  item.key === record.key
-                    ? { ...item, status: newStatus }
-                    : item
-                );
                 toast.success(
                   `Employee ${
                     newStatus === "active" ? "activated" : "deactivated"
                   } successfully!`
                 );
-                // Update the state with the new data
-                // This is a placeholder; you would typically update state in a real app
-                console.log("Updated Data:", updatedData);
+                // You would typically make an API call here to update the status
+                console.log("Toggle status for:", record.id, "to:", newStatus);
               }}
               icon={
                 record.status === "active" ? (
@@ -333,7 +212,7 @@ export default function StaffListPage() {
     },
   };
 
-  const filteredData = staffData.filter(
+  const filteredData = transformedStaffData.filter(
     (item) =>
       item.name.toLowerCase().includes(searchText.toLowerCase()) ||
       item.email.toLowerCase().includes(searchText.toLowerCase()) ||
@@ -352,21 +231,29 @@ export default function StaffListPage() {
     password: string;
     confirmPassword: string;
   }) => {
-    // Map the modal data to StaffMember if needed
-    const newStaffMember: StaffMember = {
-      key: Date.now().toString(),
-      id: Math.random().toString(36).substr(2, 10).toUpperCase(),
-      name: data.userName,
-      email: data.email,
-      phone: "", // You may want to collect this in the modal
-      designation: data.designationType,
-      status: "active",
-    };
-    console.log("Saved data:", newStaffMember);
-    // Handle save logic here
+    // Handle the creation of new staff member
+    console.log("Creating new staff member:", data);
     toast.success("Profile created successfully!");
-    setIsModalVisible(false);
+    refetch();
+    setIsCreateProfileModalVisible(false);
+    // You would typically make an API call here to create the new user
   };
+
+  // if (isLoading) {
+  //   return <Spinner />;
+  // }
+
+  if (error) {
+    return (
+      <div style={{ padding: "24px", textAlign: "center" }}>
+        <div style={{ color: "#ff4d4f", marginBottom: "16px" }}>
+          Error loading staff data
+        </div>
+        <Button onClick={() => window.location.reload()}>Retry</Button>
+      </div>
+    );
+  }
+
   return (
     <div style={{ padding: "0 24px 24px" }}>
       <Card
@@ -382,11 +269,11 @@ export default function StaffListPage() {
           }}
         >
           <Title level={3} style={{ margin: 0, color: "#333" }}>
-            Employee List
+            Employee List ({transformedStaffData.length})
           </Title>
           <Space size="middle">
             <Input
-              placeholder="Search here"
+              placeholder="Search by name, email, or designation"
               allowClear
               style={{
                 width: 350,
@@ -438,33 +325,66 @@ export default function StaffListPage() {
             </Button>
           </Space>
         </div>
-        <Table
-          columns={columns}
-          dataSource={paginatedData}
-          pagination={{
-            current: currentPage,
-            pageSize: pageSize,
-            total: filteredData.length,
-            onChange: (page) => setCurrentPage(page),
-            showSizeChanger: false,
-            showQuickJumper: false,
-            showTotal: (total, range) =>
-              `Showing ${range[0]}-${range[1]} out of ${total}`,
-            itemRender: (current, type, originalElement) => {
-              if (type === "prev") {
-                return <Button size="small">Previous</Button>;
-              }
-              if (type === "next") {
-                return <Button size="small">Next</Button>;
-              }
-              return originalElement;
-            },
-          }}
-          scroll={{ x: 1000 }}
-          size="middle"
-          rowSelection={rowSelection}
-          style={{ background: "#fff" }}
-        />
+
+        {selectedRowKeys.length > 0 && (
+          <div
+            style={{
+              marginBottom: "16px",
+              padding: "8px 16px",
+              backgroundColor: "#f0f8ff",
+              borderRadius: "8px",
+            }}
+          >
+            <span style={{ color: "#1890ff" }}>
+              {selectedRowKeys.length} item(s) selected
+            </span>
+            <Button
+              type="link"
+              size="small"
+              onClick={() => setSelectedRowKeys([])}
+              style={{ marginLeft: "8px" }}
+            >
+              Clear selection
+            </Button>
+          </div>
+        )}
+        {isLoading ? (
+          <Spinner />
+        ) : (
+          <Table
+            columns={columns}
+            dataSource={paginatedData}
+            pagination={{
+              current: currentPage,
+              pageSize: pageSize,
+              total: filteredData.length,
+              onChange: (page) => setCurrentPage(page),
+              showSizeChanger: true,
+              showQuickJumper: true,
+              showTotal: (total, range) =>
+                `Showing ${range[0]}-${range[1]} of ${total} employees`,
+              pageSizeOptions: ["10", "20", "50", "100"],
+              onShowSizeChange: (current, size) => {
+                setPageSize(size);
+                setCurrentPage(1);
+              },
+              itemRender: (current, type, originalElement) => {
+                if (type === "prev") {
+                  return <Button size="small">Previous</Button>;
+                }
+                if (type === "next") {
+                  return <Button size="small">Next</Button>;
+                }
+                return originalElement;
+              },
+            }}
+            scroll={{ x: 1000 }}
+            size="middle"
+            rowSelection={rowSelection}
+            style={{ background: "#fff" }}
+            loading={isLoading}
+          />
+        )}
       </Card>
 
       <ConfigProvider
@@ -486,6 +406,7 @@ export default function StaffListPage() {
           visible={isCreateProfileModalVisible}
           onClose={() => setIsCreateProfileModalVisible(false)}
           onSave={handleProfileSave}
+          refetch={refetch}
         />
       </ConfigProvider>
     </div>

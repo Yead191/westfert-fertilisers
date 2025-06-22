@@ -22,6 +22,7 @@ import Image from "next/image";
 import { toast } from "sonner";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
+import useBaseUrl from "@/hooks/useBaseUrl";
 
 const { Sider, Header, Content } = Layout;
 const { Title, Text } = Typography;
@@ -38,6 +39,7 @@ export default function DashboardSidebar({
   const [selectedKey, setSelectedKey] = useState("analytics");
   const router = useRouter();
   const pathname = usePathname();
+  const baseUrl = useBaseUrl();
   // console.log(pathname);
   useEffect(() => {
     setSelectedKey(pathname.split("/")[1] || "analytics");
@@ -120,14 +122,37 @@ export default function DashboardSidebar({
       description: "You will be logged out and redirected to the login page.",
       action: {
         label: "Logout",
-        onClick: () => {
-          console.log("Logout confirmed");
-          toast.success("Logged out successfully!");
-          router.push("/auth/login");
+        onClick: async () => {
+          try {
+            await toast.promise(
+              fetch(`${baseUrl}/api/auth/logout`, {
+                method: "POST",
+                credentials: "include", // important for sending cookies
+              }).then(async (res) => {
+                const data = await res.json();
+                if (!res.ok) {
+                  throw new Error(data.message || "Logout failed");
+                }
+                return data.message;
+              }),
+              {
+                loading: "Logging out...",
+                success: (msg) => <b>{msg}</b>,
+                error: (err) => err.message || "Logout failed",
+              }
+            );
+
+            // Redirect to login after logout is complete
+            router.push("/auth/login");
+          } catch (error) {
+            console.error("Unexpected logout error:", error);
+            toast.error("Something went wrong during logout");
+          }
         },
       },
     });
   };
+
   return (
     <Layout style={{ minHeight: "100vh", position: "fixed", zIndex: 10 }}>
       <Sider

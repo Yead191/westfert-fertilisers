@@ -22,13 +22,7 @@ interface StaffMember {
 export default function TermsConditions() {
   const [isCreateProfileModalVisible, setIsCreateProfileModalVisible] =
     useState(false);
-  const [content, setContent] = useState(`
-    <p>Shpitze is an innovative platform connecting businesses with qualified, on-demand professionals. Initially focused on the dental industry in Vancouver, Shpitze helps dental offices fill urgent or part-time positions with ease. Our app enables employers to find vetted and available professionals quickly, ensuring smooth operations even during staff shortages.</p>
-    
-    <p>We are expanding beyond dental services, aiming to support various industries. Our mission is to streamline temporary hiring, saving businesses time while providing professionals with flexible opportunities.</p>
-    
-    <p>Shpitze: Connecting Professionals with Opportunity, Anytime, Anywhere!</p>
-  `);
+  const [content, setContent] = useState("");
 
   const handleContentChange = (value: string) => {
     setContent(value);

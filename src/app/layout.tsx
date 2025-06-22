@@ -4,6 +4,8 @@ import { Poppins } from "next/font/google";
 import "./globals.css";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
 import { Toaster } from "sonner";
+import { UserProvider } from "@/helpers/userProvider";
+import ReduxProvider from "@/redux/lib/ReduxProvider";
 
 // const geistSans = Geist({
 //   variable: "--font-geist-sans",
@@ -34,10 +36,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${poppins.variable}  antialiased poppins`}>
-        <AntdRegistry>
-          <Toaster position="top-right" duration={1500} />
-          {children}
-        </AntdRegistry>
+        <ReduxProvider>
+          <AntdRegistry>
+            <UserProvider>
+              <Toaster position="top-right" duration={1500} />
+              {children}
+            </UserProvider>
+          </AntdRegistry>
+        </ReduxProvider>
       </body>
     </html>
   );

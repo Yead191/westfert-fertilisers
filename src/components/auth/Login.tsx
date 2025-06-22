@@ -5,15 +5,33 @@ import { Form, Input, Button, Select, Checkbox } from "antd";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import useBaseUrl from "@/hooks/useBaseUrl";
+import { useLoginMutation } from "@/redux/feature/auth/authApi";
+// import { useLoginUserMutation } from "@/redux/feature/auth/authApi";
 // import { useRouter } from "next/navigation";
 const { Option } = Select;
 
 const SignInForm = () => {
   const router = useRouter();
-  const onFinish = (values: any) => {
-    console.log("Received values:", values);
-    toast.success("Sign In Successful!");
-    router.push("/analytics");
+  const baseUrl = useBaseUrl();
+  const [login, { isLoading }] = useLoginMutation();
+  const onFinish = async (values: any) => {
+    try {
+      await toast.promise(
+        login(values).unwrap(), // call RTK Query mutation
+        {
+          loading: "Signing in...",
+          success: (res) => {
+            router.push("/analytics");
+            return <b>{res.message}</b>;
+          },
+          error: (err) => err.data?.message || err.message || "Login failed",
+        }
+      );
+    } catch (error) {
+      // Already handled by toast.promise, but you can log if needed
+      console.error("Login error:", error);
+    }
   };
 
   return (

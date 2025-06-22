@@ -23,6 +23,8 @@ import dayjs from "dayjs";
 import EditProfileModal from "../Modal/EditProfileModal";
 import ChangePasswordModal from "../Modal/ChangePasswordModal";
 import { toast } from "sonner";
+import { useGetProfileQuery } from "@/redux/feature/auth/authApi";
+import Spinner from "../Spinner";
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -49,6 +51,7 @@ export default function ProfilePage() {
     gender: "Male",
     address: "284 Daffodil Dr, Mount Frere, Eastern Cape -5088 South Africa",
   });
+  const { data: profile, isLoading } = useGetProfileQuery(null);
 
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [isSettingsModalVisible, setIsSettingsModalVisible] = useState(false);
@@ -79,10 +82,10 @@ export default function ProfilePage() {
   };
 
   const profileFields = [
-    { label: "Name", value: profileData.name, key: "name" },
-    { label: "Position", value: profileData.position, key: "position" },
-    { label: "Id. no", value: profileData.idNo, key: "idNo" },
-    { label: "Email", value: profileData.email, key: "email" },
+    { label: "Name", value: profile?.name, key: "name" },
+    { label: "Position", value: profile?.designation, key: "position" },
+    { label: "Id. no", value: profile?.uid, key: "idNo" },
+    { label: "Email", value: profile?.email, key: "email" },
     {
       label: "Contact Number",
       value: profileData.contactNumber,
@@ -126,93 +129,102 @@ export default function ProfilePage() {
         }}
         bodyStyle={{ padding: "32px" }}
       >
-        <Row gutter={32}>
-          {/* Left Column - Profile Photo and Basic Info */}
-          <Col xs={24} md={5}>
-            <div style={{ textAlign: "center" }}>
-              <Avatar
-                size={250}
-                src="/user.jpg?height=250&width=250"
-                icon={<UserOutlined />}
+        {isLoading ? (
+          <Spinner />
+        ) : (
+          <Row gutter={32}>
+            {/* Left Column - Profile Photo and Basic Info */}
+            <Col xs={24} md={5}>
+              <div style={{ textAlign: "center" }}>
+                <Avatar
+                  size={250}
+                  src="/user.jpg?height=250&width=250"
+                  icon={<UserOutlined />}
+                  style={{
+                    marginBottom: 16,
+                    border: "4px solid #f0f0f0",
+                    borderRadius: 12,
+                  }}
+                />
+                <Title
+                  level={4}
+                  style={{ margin: "8px 0 4px 0", color: "#333" }}
+                >
+                  {profile?.name}
+                </Title>
+                <Text style={{ color: "#1890ff", fontSize: 16 }}>
+                  {profile?.designation}
+                </Text>
+              </div>
+            </Col>
+
+            {/* Right Column - Detailed Information */}
+            <Col xs={24} md={18}>
+              <div
                 style={{
-                  marginBottom: 16,
-                  border: "4px solid #f0f0f0",
-                  borderRadius: 12,
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  marginBottom: 24,
                 }}
-              />
-              <Title level={4} style={{ margin: "8px 0 4px 0", color: "#333" }}>
-                {profileData.name}
-              </Title>
-              <Text style={{ color: "#1890ff", fontSize: 16 }}>
-                {profileData.position}
-              </Text>
-            </div>
-          </Col>
+              >
+                <Title level={3} style={{ margin: 0, color: "#333" }}>
+                  Profile Information
+                </Title>
+                <Space>
+                  <Button
+                    type="text"
+                    icon={<SettingOutlined />}
+                    onClick={handleSettings}
+                    style={{ color: "#666" }}
+                  />
+                  <Button
+                    type="text"
+                    icon={<EditOutlined />}
+                    onClick={handleEdit}
+                    style={{ color: "#666" }}
+                  />
+                </Space>
+              </div>
 
-          {/* Right Column - Detailed Information */}
-          <Col xs={24} md={18}>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                marginBottom: 24,
-              }}
-            >
-              <Title level={3} style={{ margin: 0, color: "#333" }}>
-                Profile Information
-              </Title>
-              <Space>
-                <Button
-                  type="text"
-                  icon={<SettingOutlined />}
-                  onClick={handleSettings}
-                  style={{ color: "#666" }}
-                />
-                <Button
-                  type="text"
-                  icon={<EditOutlined />}
-                  onClick={handleEdit}
-                  style={{ color: "#666" }}
-                />
-              </Space>
-            </div>
-
-            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-              {profileFields.map((field, index) => (
-                <div key={field.key}>
-                  <Row>
-                    <Col span={8}>
-                      <Text
-                        style={{
-                          color: "#888",
-                          fontSize: 14,
-                          fontWeight: 500,
-                        }}
-                      >
-                        {field.label}
-                      </Text>
-                    </Col>
-                    <Col span={16}>
-                      <Text
-                        style={{
-                          color: "#333",
-                          fontSize: 14,
-                          wordBreak: "break-word",
-                        }}
-                      >
-                        {field.value}
-                      </Text>
-                    </Col>
-                  </Row>
-                  {index < profileFields.length - 1 && (
-                    <Divider style={{ margin: "12px 0" }} />
-                  )}
-                </div>
-              ))}
-            </div>
-          </Col>
-        </Row>
+              <div
+                style={{ display: "flex", flexDirection: "column", gap: 16 }}
+              >
+                {profileFields.map((field, index) => (
+                  <div key={field.key}>
+                    <Row>
+                      <Col span={8}>
+                        <Text
+                          style={{
+                            color: "#888",
+                            fontSize: 14,
+                            fontWeight: 500,
+                          }}
+                        >
+                          {field.label}
+                        </Text>
+                      </Col>
+                      <Col span={16}>
+                        <Text
+                          style={{
+                            color: "#333",
+                            fontSize: 14,
+                            wordBreak: "break-word",
+                          }}
+                        >
+                          {field.value}
+                        </Text>
+                      </Col>
+                    </Row>
+                    {index < profileFields.length - 1 && (
+                      <Divider style={{ margin: "12px 0" }} />
+                    )}
+                  </div>
+                ))}
+              </div>
+            </Col>
+          </Row>
+        )}
 
         {/* modal */}
         <ConfigProvider
