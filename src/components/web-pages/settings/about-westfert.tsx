@@ -3,10 +3,11 @@
 import { useRef, useState } from "react";
 import { Button, Typography, Card, ConfigProvider } from "antd";
 import dynamic from "next/dynamic";
-import JoditEditor from "jodit-react";
+// import JoditEditor from "jodit-react";
 import CreateProfileModal from "@/components/Modal/CreateProfileModal";
 import { toast } from "sonner";
 import { PlusOutlined } from "@ant-design/icons";
+const JoditEditor = dynamic(() => import("jodit-react"), { ssr: false });
 
 const { Title } = Typography;
 interface StaffMember {
