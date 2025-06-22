@@ -153,6 +153,7 @@ export default function TermsConditions() {
           visible={isCreateProfileModalVisible}
           onClose={() => setIsCreateProfileModalVisible(false)}
           onSave={handleProfileSave}
+          refetch={() => {}}
         />
       </ConfigProvider>
     </div>

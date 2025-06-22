@@ -153,6 +153,8 @@ export default function AppSupport() {
           visible={isCreateProfileModalVisible}
           onClose={() => setIsCreateProfileModalVisible(false)}
           onSave={handleProfileSave}
+          refetch={() => {}}
+
         />
       </ConfigProvider>
     </div>
