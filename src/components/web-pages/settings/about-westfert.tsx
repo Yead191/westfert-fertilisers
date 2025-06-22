@@ -153,6 +153,7 @@ export default function AboutWestfert() {
           visible={isCreateProfileModalVisible}
           onClose={() => setIsCreateProfileModalVisible(false)}
           onSave={handleProfileSave}
+          refetch={() => {}}
         />
       </ConfigProvider>
     </div>
