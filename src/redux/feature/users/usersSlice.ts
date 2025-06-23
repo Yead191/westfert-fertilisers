@@ -10,7 +10,32 @@ const userSlice = baseApi.injectEndpoints({
         method: "GET",
       }),
     }),
+    // updateStatus
+    updateStatus: build.mutation({
+      query: ({ id, data }) => ({
+        url: `/users/profile/status/${id}`,
+        method: "PATCH",
+        body: data,
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }),
+    }),
+
+    // update profile
+    updateProfile: build.mutation({
+      query: ({ id, data }) => ({
+        url: `/users/profile/update/${id}`,
+        method: "PATCH",
+        body: data,
+      }),
+    }),
   }),
 });
 
-export const { useAllUserQuery } = userSlice;
+export const {
+  useAllUserQuery,
+  useUpdateStatusMutation,
+  useUpdateProfileMutation,
+} = userSlice;

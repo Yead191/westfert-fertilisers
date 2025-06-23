@@ -242,7 +242,7 @@ export default function ProfilePage() {
             onClose={() => setIsEditModalVisible(false)}
             onSave={handleSave}
             initialData={{
-              name: "",
+              userName: "",
               contactNumber: "",
               //   squareNumber: "123",
               dateOfBirth: "1990-01-01",

@@ -36,6 +36,11 @@ import Paragraph from "antd/es/typography/Paragraph";
 import { useState } from "react";
 import EditProfileModal from "./EditProfileModal";
 import ChangePasswordModal from "./ChangePasswordModal";
+import {
+  useAllUserQuery,
+  useUpdateProfileMutation,
+} from "@/redux/feature/users/usersSlice";
+import { useGetProfileQuery } from "@/redux/feature/auth/authApi";
 
 const { Title, Text } = Typography;
 const { Search } = Input;
@@ -66,7 +71,8 @@ export default function EmployeeDetailsModal({
 }: EmployeeDetailsModalProps) {
   const [isEditProfileModalOpen, setIsEditProfileModalOpen] = useState(false);
   const [changePasswordModal, setChangePasswordModal] = useState(false);
-
+  const [updateProfile] = useUpdateProfileMutation();
+  const { data, isLoading, refetch } = useAllUserQuery({});
   // Demo performance data
   const performanceData = [
     { month: "Jan", sale: 750, target: 800 },
@@ -184,11 +190,35 @@ export default function EmployeeDetailsModal({
     onClose();
   };
 
-  const handleSave = (data: any) => {
-    console.log("Saved data:", data);
+  // update profile
+  const handleSave = async (formData: any) => {
+    console.log("Saved data:", formData);
     // Handle save logic here
-    toast.success("Profile updated successfully!");
-    setIsEditProfileModalOpen(false);
+    try {
+      const filteredData = Object.fromEntries(
+        Object.entries(formData).filter(([_, value]) => value !== "")
+      );
+      toast.promise(
+        updateProfile({
+          id: employee.key,
+          data: filteredData,
+        }).unwrap(),
+        {
+          loading: "Updating Profile",
+          success: (res) => {
+            refetch(); // if needed to refresh data
+            setIsEditProfileModalOpen(false);
+
+            return <b>{res.message || "Profile updated successfully"}</b>;
+          },
+          error: (err) => err.data?.message || err.message || "Update failed",
+        }
+      );
+
+      // toast.success(response.message || "Profile updated successfully");
+    } catch (err: any) {
+      toast.error(err?.data?.message || "Failed to update profile");
+    }
   };
 
   const handlePasswordSave = (data: any) => {
@@ -538,7 +568,7 @@ export default function EmployeeDetailsModal({
         onClose={() => setIsEditProfileModalOpen(false)}
         onSave={handleSave}
         initialData={{
-          name: employee ? employee.name : "",
+          userName: employee ? employee.name : "",
           contactNumber: employee ? employee.phone : "",
           //   squareNumber: "123",
           dateOfBirth: "1990-01-01",

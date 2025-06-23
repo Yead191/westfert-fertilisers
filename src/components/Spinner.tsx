@@ -9,7 +9,7 @@ const Spinner = () => {
       <Image src={"/logo.png"} alt="Westfert Logo" width={500} height={300} />
 
       {/* Spinner below the image */}
-      <div className="w-8 h-8 border-4 border-dashed rounded-full animate-spin border-gray-400 border-t-transparent"></div>
+      <div className="w-8 h-8 border-4 border-dashed rounded-full animate-spin border-gray-400 border-t-transparent -ml-24"></div>
     </div>
   );
 };

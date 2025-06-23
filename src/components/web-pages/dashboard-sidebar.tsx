@@ -159,7 +159,7 @@ export default function DashboardSidebar({
         // collapsible
         collapsed={collapsed}
         onCollapse={onCollapse}
-        width={240}
+        width={280}
         style={{
           background: "#fff",
           borderRight: "1px solid #f0f0f0",
@@ -195,9 +195,10 @@ export default function DashboardSidebar({
           {!collapsed && (
             <div>
               <Image
+                className="w-full"
                 src="/logo.png"
                 alt="Westfert Logo"
-                width={200}
+                width={300}
                 height={32}
               />
             </div>
@@ -208,7 +209,7 @@ export default function DashboardSidebar({
         <div
           style={{
             // height: "calc(100vh - 120px)",
-            height: "calc(100vh - 90px)",
+            height: "calc(100vh - 102px)",
             overflowY: "auto",
             display: "flex",
             flexDirection: "column",
@@ -222,6 +223,12 @@ export default function DashboardSidebar({
             style={{
               border: "none",
               flex: 1,
+              marginTop: 5,
+              display: "flex",
+              flexDirection: "column",
+              // gap: 2,
+              fontSize: 16,
+              // padding: "6px 0",
             }}
             onClick={({ key }) => {
               router.push(`/${key}`);

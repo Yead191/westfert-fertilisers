@@ -296,7 +296,7 @@ export default function CustomerList() {
       width: 200,
     },
     {
-      title: "Company Name",
+      title: "Phone Number",
       dataIndex: "companyName",
       key: "companyName",
       width: 180,

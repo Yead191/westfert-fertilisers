@@ -26,7 +26,10 @@ import type { ColumnsType } from "antd/es/table";
 import EmployeeDetailsModal from "../Modal/EmployeeDetailsModal";
 import { toast } from "sonner";
 import CreateProfileModal from "../Modal/CreateProfileModal";
-import { useAllUserQuery } from "@/redux/feature/users/usersSlice";
+import {
+  useAllUserQuery,
+  useUpdateStatusMutation,
+} from "@/redux/feature/users/usersSlice";
 import Spinner from "../Spinner";
 
 const { Title } = Typography;
@@ -38,7 +41,7 @@ interface StaffMember {
   email: string;
   phone: string;
   designation: string;
-  status: "active" | "inactive";
+  status: string;
   createdAt: string;
 }
 
@@ -48,6 +51,7 @@ interface ApiStaffData {
   email: string;
   password: string;
   designation: string;
+  status: string;
   createdAt: string;
 }
 
@@ -64,6 +68,8 @@ export default function StaffListPage() {
     useState(false);
 
   const { data: users, isLoading, error, refetch } = useAllUserQuery({});
+
+  const [updateStatus] = useUpdateStatusMutation();
   // console.log(users);
   // Transform API data to match component structure
   const transformedStaffData: StaffMember[] = useMemo(() => {
@@ -76,7 +82,7 @@ export default function StaffListPage() {
       email: user.email,
       phone: "", // Not available in your data structure
       designation: user.designation,
-      status: "active" as const, // Default to active since status isn't in your data
+      status: user.status,
       createdAt: user.createdAt,
     }));
   }, [users]);
@@ -143,12 +149,12 @@ export default function StaffListPage() {
       dataIndex: "status",
       key: "status",
       width: 100,
-      render: (status: string) => (
+      render: (text: string) => (
         <Tag
-          color={status === "active" ? "green" : "red"}
+          color={text === "active" ? "green" : "red"}
           style={{ border: "none", borderRadius: "4px", fontWeight: "500" }}
         >
-          {status.charAt(0).toUpperCase() + status.slice(1)}
+          {text}
         </Tag>
       ),
     },
@@ -175,18 +181,7 @@ export default function StaffListPage() {
           >
             <Button
               type="text"
-              onClick={() => {
-                // Handle status toggle logic here
-                const newStatus =
-                  record.status === "active" ? "inactive" : "active";
-                toast.success(
-                  `Employee ${
-                    newStatus === "active" ? "activated" : "deactivated"
-                  } successfully!`
-                );
-                // You would typically make an API call here to update the status
-                console.log("Toggle status for:", record.id, "to:", newStatus);
-              }}
+              onClick={() => handleUpdateStatus(record.key, record.status)}
               icon={
                 record.status === "active" ? (
                   <LockOutlined />
@@ -253,6 +248,32 @@ export default function StaffListPage() {
       </div>
     );
   }
+
+  // handle update status
+  const handleUpdateStatus = (id: string, status: string) => {
+    const newStatus = status === "active" ? "inactive" : "active";
+
+    try {
+      toast.promise(
+        updateStatus({ id, data: { status: newStatus } }).unwrap(),
+        {
+          loading: "Updating status...",
+          success: (res) => {
+            console.log("API response:", res);
+            if (res?.modifiedCount > 0) {
+              refetch();
+              return <b>Status Updated Successfully</b>;
+            }
+            return <b>Status was already {newStatus}</b>;
+          },
+          error: (err) =>
+            err?.message || err?.data?.message || "Failed to update status!",
+        }
+      );
+    } catch (err) {
+      toast.error("An error occurred!");
+    }
+  };
 
   return (
     <div style={{ padding: "0 24px 24px" }}>

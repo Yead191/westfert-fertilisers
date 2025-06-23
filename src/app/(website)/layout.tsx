@@ -13,7 +13,7 @@ const layout = ({ children }: { children: ReactNode }) => {
 
   return (
     <div className="flex gap-2 p-2 md:p-0 bg-[#F1F1F9] min-h-screen">
-      <div className="w-[240px]">
+      <div className="w-[280px]">
         <DashboardSidebar collapsed={collapsed} onCollapse={setCollapsed} />
       </div>
       <div className="w-full flex-1  ">
