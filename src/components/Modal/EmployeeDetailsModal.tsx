@@ -295,7 +295,7 @@ export default function EmployeeDetailsModal({
                 <strong>Email:</strong> {employee.email}
               </Paragraph>
               <Paragraph>
-                <strong>Contact Number:</strong> {employee.phone}
+                <strong>Contact Number:</strong> {employee?.contactNumber}
               </Paragraph>
               <Paragraph>
                 <strong>Status:</strong> {employee.status}
@@ -410,7 +410,7 @@ export default function EmployeeDetailsModal({
                       }}
                     >
                       <Typography.Text strong>Contact Number</Typography.Text>
-                      <Typography.Text> {employee?.phone}</Typography.Text>
+                      <Typography.Text> {employee?.contactNumber}</Typography.Text>
                     </div>
                     <div
                       style={{

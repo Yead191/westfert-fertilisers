@@ -39,7 +39,7 @@ interface StaffMember {
   id: string;
   name: string;
   email: string;
-  phone: string;
+  contactNumber: string;
   designation: string;
   status: string;
   createdAt: string;
@@ -53,6 +53,7 @@ interface ApiStaffData {
   designation: string;
   status: string;
   createdAt: string;
+  contactNumber: string;
 }
 
 export default function StaffListPage() {
@@ -80,7 +81,7 @@ export default function StaffListPage() {
       id: user._id.slice(-8).toUpperCase(), // Use last 8 characters of _id as display ID
       name: user.userName,
       email: user.email,
-      phone: "", // Not available in your data structure
+      contactNumber: user.contactNumber, // contactNumber not available in API data
       designation: user.designation,
       status: user.status,
       createdAt: user.createdAt,
