@@ -79,6 +79,15 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
 
   const handleSave = () => {
     onSave(formData);
+    setFormData({
+      userName: "",
+      contactNumber: "",
+      squareNumber: "",
+      dateOfBirth: "",
+      gender: "Male",
+      address: "",
+      profilePicture: null,
+    });
     onClose();
   };
 
